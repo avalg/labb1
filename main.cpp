@@ -30,6 +30,7 @@ int main() {
 
     //cout << x[n-1];
     //cout << y[n-1];
+    cout << "efter inlasning";
 
     int matrix[n][n];
     long distance;
@@ -47,7 +48,7 @@ int main() {
             matrix[j][i] = round(distance);
         }
     }
-
+    cout << "efter matrix making";
     int hash[n];
     int totlegth = 0;
     i = 0;
@@ -63,6 +64,7 @@ int main() {
     hash[n - 1] = 0;
     totlegth += matrix[n - 1][0];
 
+    cout << "efter totlength";
     int r1;
     int r2;
     int swap;
@@ -73,18 +75,19 @@ int main() {
         go++;
         r1 = rand() % n;
         r2 = rand() % n;
-        if (r1 == r2) continue;
-        if (hash[r1] == r2) continue;
-        swap = hash[r1];
-        newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
-              - matrix[r1][swap] - matrix[r2][hash[r2]];
-        if (newdist < 0) {
-        hash[r1] = hash[swap];
-        hash[swap] = hash[r2];
-        hash[r2] = swap;
+        if (r1 != r2 && hash[r1] != r2) {
+            swap = hash[r1];
+            newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
+                                                                  - matrix[r1][swap] - matrix[r2][hash[r2]];
+            if (newdist < 0) {
+                hash[r1] = hash[swap];
+                hash[swap] = hash[r2];
+                hash[r2] = swap;
+            }
+            totlegth += newdist;
+        }
     }
-        totlegth += newdist;
-    }
+    cout << "efter gp fu";
     int order[n];
     int counter = 0;
     int stop = hash[0];
@@ -94,6 +97,7 @@ int main() {
         order[stop]=counter;
         stop = hash[stop];
     }
+    cout << "efter order";
 
 
     //TODO utskrifter
