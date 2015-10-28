@@ -2,8 +2,6 @@
 // Created by Sara Feychting on 28-10-2015.
 //
 
-#include "main.h"
-
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
@@ -14,11 +12,11 @@ int main() {
     int n;
     cin >> n; //number of elements
 
-    long x[n];
-    long y[n];
+    double x[n];
+    double y[n];
 
     int i = 0;
-    long temp;
+    double temp;
 
     while (i < n) {
         cin >> temp;
@@ -30,47 +28,48 @@ int main() {
 
     //cout << x[n-1];
     //cout << y[n-1];
-    cout << "efter inlasning";
 
-    int matrix[n][n];
-    long distance;
-    long xdist;
-    long ydist;
-    long sqrtval;
+    long matrix[n][n];
+    double distance;
+    double xdist;
+    double ydist;
+    double xsqrt;
+    double ysqrt;
+    double sqrtval;
     for (int i = 0; i < n; i++) {
         for (int j = i; j < n; j++) {
             xdist = x[i] - x[j];
             ydist = y[i] - y[j];
-            //cout << pow(xdist, 2);
-            sqrtval = (pow(xdist, 2) + pow(ydist, 2));
+            xsqrt = pow(xdist, 2);
+            ysqrt = pow(ydist, 2);
+            sqrtval = xsqrt + ysqrt;
             distance = sqrt(sqrtval);
             matrix[i][j] = round(distance);
             matrix[j][i] = round(distance);
         }
     }
-    cout << "efter matrix making";
+
     int hash[n];
     int totlegth = 0;
-    i = 0;
-    int j = 1;
-    while (j < n - 1) {
-        hash[i] = j;
-        totlegth += matrix[i][j];
-        i = j + 1;
-        hash[j] = i;
-        totlegth += matrix[j][i];
-        j = i + 1;
+    int a = 0;
+    int b = 1;
+    while (b < n) {
+        hash[a] = b;
+        totlegth += matrix[a][b];
+        a += 1;
+        b += 1;
     }
     hash[n - 1] = 0;
     totlegth += matrix[n - 1][0];
+    cout << totlegth;
+    cout << endl;
 
-    cout << "efter totlength";
     int r1;
     int r2;
     int swap;
     int newdist;
     int go = 0;
-    int fu = n*n;
+    int fu = n;
     while (go<fu) {
         go++;
         r1 = rand() % n;
@@ -80,28 +79,23 @@ int main() {
             newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
                                                                   - matrix[r1][swap] - matrix[r2][hash[r2]];
             if (newdist < 0) {
+                cout << "new dist";
                 hash[r1] = hash[swap];
                 hash[swap] = hash[r2];
                 hash[r2] = swap;
+                totlegth += newdist;
             }
-            totlegth += newdist;
         }
     }
-    cout << "efter gp fu";
+    cout << "new totlegth " << totlegth << endl;
+
     int order[n];
     int counter = 0;
-    int stop = hash[0];
-    order[0] = counter;
-    while(stop!=0) {
-        counter++;
-        order[stop]=counter;
-        stop = hash[stop];
+    int target = 0;
+    for (int counter = 0; counter < n; counter++) {
+        order[target]=counter;
+        target = hash[target];
     }
-    cout << "efter order";
-
-
-    //TODO utskrifter
-    //cout << matrix[n-1][n-2];
     for(int i = 0; i<n; i++){
         cout << order[i];
         cout << endl;
