@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <cmath>
-#include <stdlib>
+#include <cstdlib>
 using namespace std;
 
 int main() {
@@ -51,7 +51,7 @@ int main() {
     int hash[n];
     int totlegth = 0;
     i = 0;
-    j = 1;
+    int j = 1;
     while (j < n - 1) {
         hash[i] = j;
         totlegth += matrix[i][j];
@@ -63,20 +63,18 @@ int main() {
     hash[n - 1] = 0;
     totlegth += matrix[n - 1][0];
 
-    // TODO calc totlegth
-
     int r1;
     int r2;
     int swap;
     int newdist;
     int go = 0;
-    int fu = 100000;
+    int fu = n*n;
     while (go<fu) {
         go++;
         r1 = rand() % n;
         r2 = rand() % n;
-        if (r1 = r2) continue;
-        if (hash[r1] = r2) continue;
+        if (r1 == r2) continue;
+        if (hash[r1] == r2) continue;
         swap = hash[r1];
         newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
               - matrix[r1][swap] - matrix[r2][hash[r2]];
@@ -87,7 +85,7 @@ int main() {
     }
         totlegth += newdist;
     }
-    order[n];
+    int order[n];
     int counter = 0;
     int stop = hash[0];
     order[0] = counter;
@@ -98,5 +96,10 @@ int main() {
     }
 
 
+    //TODO utskrifter
     //cout << matrix[n-1][n-2];
+    for(int i = 0; i<n; i++){
+        cout << order[i];
+        cout << endl;
+    }
 };
