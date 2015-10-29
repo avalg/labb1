@@ -44,25 +44,42 @@ int main() {
             ysqrt = pow(ydist, 2);
             sqrtval = xsqrt + ysqrt;
             distance = sqrt(sqrtval);
+            //cout << "distance " << distance << endl;
             matrix[i][j] = round(distance);
             matrix[j][i] = round(distance);
         }
     }
 
-    int hash[n];
-    int totlegth = 0;
-    int a = 0;
-    int b = 1;
-    while (b < n) {
-        hash[a] = b;
-        totlegth += matrix[a][b];
-        a += 1;
-        b += 1;
+    cout << "matrix 1 4" << matrix[0][3] << endl;
+    cout << "matrix 2 4" << matrix[1][3] << endl;
+
+    int tour[n];
+    int best;
+    bool used[n];
+    tour[0]=0;
+    used[0]= true;
+    for(int i = 1; i < n; i++) {
+        best = -1;
+        for(int j = 1; j < n; j++) {
+            if(!used[j] && (best==-1 || (matrix[tour[i-1]][j] < matrix[tour[i-1]][best]))) {
+                best = j;
+            }
+        }
+        tour[i]=best;
+        used[best]=true;
     }
-    hash[n - 1] = 0;
-    totlegth += matrix[n - 1][0];
-    cout << totlegth;
-    cout << endl;
+    cout << tour[1] << " : nr 1" << endl;
+    int totlegth = 0;
+    int hash[n];
+    int tar = 0;
+    for (int i = 1; i<n; i++) {
+        hash[tar] = tour[i];
+        totlegth += matrix[tar][tour[i]];
+        tar = tour[i];
+    }
+    hash[tar]=0;
+    totlegth += matrix[0][tar];
+    cout << totlegth << " tot" << endl;
 
     int r1;
     int r2;
