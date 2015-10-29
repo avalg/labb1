@@ -26,6 +26,9 @@ int main() {
         i++;
     }
 
+    //cout << x[n-1];
+    //cout << y[n-1];
+
     long matrix[n][n];
     double distance;
     double xdist;
@@ -41,46 +44,69 @@ int main() {
             ysqrt = pow(ydist, 2);
             sqrtval = xsqrt + ysqrt;
             distance = sqrt(sqrtval);
+            //cout << "distance " << distance << endl;
             matrix[i][j] = round(distance);
             matrix[j][i] = round(distance);
         }
     }
 
+
+    bool used[n];
+
+    int b = 0;
+    while(b<n){
+        used[b] = 0;
+        b++;
+    }
+
     int tour[n];
     int best;
-    bool used[n];
-    for (int b = 0; b<n; b++) {
-        used[b]=false;
-    }
+
     tour[0]=0;
     used[0]= true;
     for(int i = 1; i < n; i++) {
         best = -1;
         for(int j = 1; j < n; j++) {
-            if(!used[j] && (best==-1 || (matrix[tour[i-1]][j] < matrix[tour[i-1]][best]))) {
+
+            if(!used[j]){
+                if(best==-1 || (matrix[tour[i-1]][j] < matrix[tour[i-1]][best])) {
                 best = j;
+                }
             }
         }
+
         tour[i]=best;
         used[best]=true;
     }
-    long totlegth = 0;
+
+
+    int totlegth = 0;
     int hash[n];
     int tar = 0;
-    for (int i = 1; i<n-2; i++) {
+    for (int i = 1; i<n; i++) {
         hash[tar] = tour[i];
-        totlegth += matrix[tar][tour[i]];
+        totlegth =totlegth + matrix[tar][tour[i]];
         tar = tour[i];
     }
     hash[tar]=0;
-    totlegth += matrix[0][tar];
+    totlegth = totlegth + matrix[0][tar];
+
+
+    int a = 0;
+    while(a <n){
+        a++;
+    }
+
+
+
+
 
     int r1;
     int r2;
     int swap;
     int newdist;
     int go = 0;
-    int fu = n;
+    int fu = 100;
     while (go<fu) {
         go++;
         r1 = rand() % n;
@@ -90,6 +116,7 @@ int main() {
             newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
                                                                   - matrix[r1][swap] - matrix[r2][hash[r2]];
             if (newdist < 0) {
+                cout << "new dist";
                 hash[r1] = hash[swap];
                 hash[swap] = hash[r2];
                 hash[r2] = swap;
@@ -97,6 +124,7 @@ int main() {
             }
         }
     }
+    cout << "new totlegth " << totlegth << endl;
 
     int order[n];
     int counter = 0;
@@ -109,5 +137,4 @@ int main() {
         cout << order[i];
         cout << endl;
     }
-    cout << totlegth << " totlegth" << endl;
 };
