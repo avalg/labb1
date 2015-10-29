@@ -49,7 +49,7 @@ int main() {
         }
     }
 
-    int hash[n];
+/*    int hash[n];
     int totlegth = 0;
     int a = 0;
     int b = 1;
@@ -61,16 +61,41 @@ int main() {
     }
     hash[n - 1] = 0;
     totlegth += matrix[n - 1][0];
-    cout << totlegth;
-    cout << endl;
+    */
+    int hash[n];
+    bool used[n];
+    used[0] = true;
+    int index = 0;
+    for (int c = 0;c<n-1;c++){
+        int best = -1;
+        cout << index << "i"<< endl;
+        for (int j = 1; j< n; j++){
+            if (!used[j] && (best == -1 || matrix[hash[index]][j] < matrix[hash[index]][best])) {
+                best = j;
+                cout << j << "j" << endl;
+            }
+            cout << j << " j utanför" <<endl;
+        }
+        hash[index] = best;
+        used[best] = true;
+        index = best;
+        cout << best <<"best" <<endl;
+    }
+    hash[index]=0;
+
+    int totlegth;
+    int a = 0;
+    while(a < n){
+        totlegth = totlegth + matrix[a][hash[a]];
+    }
 
     int r1;
     int r2;
     int swap;
     int newdist;
     int go = 0;
-    int fu = n;
-    while (go<fu) {
+    int fu = 100;
+    while (go < fu) {
         go++;
         r1 = rand() % n;
         r2 = rand() % n;
