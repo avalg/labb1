@@ -94,8 +94,8 @@ int main() {
     int swap;
     int newdist;
     int go = 0;
-    int fu = 100;
-    while (go < fu) {
+    int fu = n;
+    while (go<fu) {
         go++;
         r1 = rand() % n;
         r2 = rand() % n;
@@ -104,7 +104,7 @@ int main() {
             newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
                                                                   - matrix[r1][swap] - matrix[r2][hash[r2]];
             if (newdist < 0) {
-                cout << "new dist";
+                //cout << "new dist";
                 hash[r1] = hash[swap];
                 hash[swap] = hash[r2];
                 hash[r2] = swap;
@@ -112,7 +112,7 @@ int main() {
             }
         }
     }
-    cout << "new totlegth " << totlegth << endl;
+    //cout << "new totlegth " << totlegth << endl;
 
     int order[n];
     int counter = 0;
