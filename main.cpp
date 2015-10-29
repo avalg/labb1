@@ -26,9 +26,6 @@ int main() {
         i++;
     }
 
-    //cout << x[n-1];
-    //cout << y[n-1];
-
     long matrix[n][n];
     double distance;
     double xdist;
@@ -44,18 +41,17 @@ int main() {
             ysqrt = pow(ydist, 2);
             sqrtval = xsqrt + ysqrt;
             distance = sqrt(sqrtval);
-            //cout << "distance " << distance << endl;
             matrix[i][j] = round(distance);
             matrix[j][i] = round(distance);
         }
     }
 
-    cout << "matrix 1 4" << matrix[0][3] << endl;
-    cout << "matrix 2 4" << matrix[1][3] << endl;
-
     int tour[n];
     int best;
     bool used[n];
+    for (int b = 0; b<n; b++) {
+        used[b]=false;
+    }
     tour[0]=0;
     used[0]= true;
     for(int i = 1; i < n; i++) {
@@ -68,18 +64,16 @@ int main() {
         tour[i]=best;
         used[best]=true;
     }
-    cout << tour[1] << " : nr 1" << endl;
-    int totlegth = 0;
+    long totlegth = 0;
     int hash[n];
     int tar = 0;
-    for (int i = 1; i<n; i++) {
+    for (int i = 1; i<n-2; i++) {
         hash[tar] = tour[i];
         totlegth += matrix[tar][tour[i]];
         tar = tour[i];
     }
     hash[tar]=0;
     totlegth += matrix[0][tar];
-    cout << totlegth << " tot" << endl;
 
     int r1;
     int r2;
@@ -96,7 +90,6 @@ int main() {
             newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
                                                                   - matrix[r1][swap] - matrix[r2][hash[r2]];
             if (newdist < 0) {
-                cout << "new dist";
                 hash[r1] = hash[swap];
                 hash[swap] = hash[r2];
                 hash[r2] = swap;
@@ -104,7 +97,6 @@ int main() {
             }
         }
     }
-    cout << "new totlegth " << totlegth << endl;
 
     int order[n];
     int counter = 0;
@@ -117,4 +109,5 @@ int main() {
         cout << order[i];
         cout << endl;
     }
+    cout << totlegth << " totlegth" << endl;
 };
