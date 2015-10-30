@@ -1,140 +1,106 @@
 //
-// Created by Sara Feychting on 28-10-2015.
+// Created by Sara Feychting and Katja Röös on 28-10-2015.
 //
-
 #include <iostream>
 #include <cmath>
-#include <cstdlib>
 using namespace std;
-
+int n;
 int main() {
 
-    int n;
-    cin >> n; //number of elements
+    cin >> n; // number of elements
 
     double x[n];
     double y[n];
+    long distm[n][n];
 
-    int i = 0;
-    double temp;
-
-    while (i < n) {
-        cin >> temp;
-        x[i] = temp;
-        cin >> temp;
-        y[i] = temp;
-        i++;
+    //save x and y for every point.
+    for(int i = 0; i < n; i++){
+        cin >> x[i];
+        cin >> y[i];
     }
 
-    //cout << x[n-1];
-    //cout << y[n-1];
-
-    long matrix[n][n];
-    double distance;
+    //build distmatrix
     double xdist;
     double ydist;
-    double xsqrt;
-    double ysqrt;
-    double sqrtval;
-    for (int i = 0; i < n; i++) {
-        for (int j = i; j < n; j++) {
-            xdist = x[i] - x[j];
+    for(int i = 0; i<n; i++){
+        for(int j = 0; j<n; j++){
+            xdist = x[i]-x[j];
             ydist = y[i] - y[j];
-            xsqrt = pow(xdist, 2);
-            ysqrt = pow(ydist, 2);
-            sqrtval = xsqrt + ysqrt;
-            distance = sqrt(sqrtval);
-            //cout << "distance " << distance << endl;
-            matrix[i][j] = round(distance);
-            matrix[j][i] = round(distance);
+
+            distm[i][j] = round(sqrt(pow(xdist,2)+(pow(ydist,2))));
+            //cout << distm[i][j] <<endl;
         }
     }
 
 
+    //sort list the naive way
+    int tour[n];
     bool used[n];
 
     int b = 0;
     while(b<n){
-        used[b] = 0;
+        used[b] = false;
         b++;
     }
 
-    int tour[n];
+    tour[0] = 0;
+    used[0] = true;
     int best;
-
-    tour[0]=0;
-    used[0]= true;
-    for(int i = 1; i < n; i++) {
+    for(int i = 1; i < n; i++){
         best = -1;
-        for(int j = 1; j < n; j++) {
-
-            if(!used[j]){
-                if(best==-1 || (matrix[tour[i-1]][j] < matrix[tour[i-1]][best])) {
+        for(int j = 0; j < n; j++){
+            if(not used[j] and (best == -1 or (distm[tour[i-1]][j] < distm[tour[i-1]][best]))){
                 best = j;
-                }
             }
         }
-
-        tour[i]=best;
-        used[best]=true;
+        tour[i] = best;
+        used[best] = true;
     }
-
-
-    int totlegth = 0;
-    int hash[n];
-    int tar = 0;
-    for (int i = 1; i<n; i++) {
-        hash[tar] = tour[i];
-        totlegth =totlegth + matrix[tar][tour[i]];
-        tar = tour[i];
+    //remake list to pointer list
+    int points[n];
+    for(int i = 0; i < n-1;i++ ){
+        points[tour[i]] = tour[i+1];
+        //cout << points[tour[i]] << " points" <<endl;
     }
-    hash[tar]=0;
-    totlegth = totlegth + matrix[0][tar];
+    points[tour[n-1]] = 0;
+
+    /*for(int i = 0; i<n; i++){
+        cout <<points[i];
+    }*/
 
 
-    int a = 0;
-    while(a <n){
-        a++;
-    }
+   //implement 2-opt OBS do not use tour after this, its old
+    srand(time(NULL));
+    int loops = 100000;
+    for (int go = 0; go < loops; go++){
+        int r1 = rand() % n;
+        int r2 = rand() % n;
 
+        int swap = points[r1];
+        if(swap == r2 || points[swap] == r2 || points[r2] == swap){
+            continue;
+        }
 
+        long olddist = distm[r1][swap]+distm[swap][points[swap]]+distm[r2][points[r2]];
+        long newdist = distm[r1][points[swap]]+distm[r2][swap]+distm[swap][points[r2]];
 
+        if(newdist < olddist){
+            int temp = points[r2];
+            points[r2] = swap;
+            points[r1] = points[swap];
+            points[swap] = temp;
 
-
-    int r1;
-    int r2;
-    int swap;
-    int newdist;
-    int go = 0;
-    int fu = 100;
-    while (go<fu) {
-        go++;
-        r1 = rand() % n;
-        r2 = rand() % n;
-        if (r1 != r2 && hash[r1] != r2) {
-            swap = hash[r1];
-            newdist = matrix[r2][swap] + matrix[swap][hash[r2]] + matrix[r1][hash[swap]]
-                                                                  - matrix[r1][swap] - matrix[r2][hash[r2]];
-            if (newdist < 0) {
-                cout << "new dist";
-                hash[r1] = hash[swap];
-                hash[swap] = hash[r2];
-                hash[r2] = swap;
-                totlegth += newdist;
-            }
         }
     }
-    cout << "new totlegth " << totlegth << endl;
 
-    int order[n];
-    int counter = 0;
-    int target = 0;
-    for (int counter = 0; counter < n; counter++) {
-        order[target]=counter;
-        target = hash[target];
+    int v = 0;
+    for (int i = 0; i < n; i++) {
+        tour[i] = v;
+        v = points[v];
     }
+
+
     for(int i = 0; i<n; i++){
-        cout << order[i];
-        cout << endl;
+        cout<<tour[i]<<endl;
     }
-};
+}
