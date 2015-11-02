@@ -4,20 +4,20 @@
 #include <iostream>
 #include <cmath>
 using namespace std;
-short n;
-short distm[1000][1000];
+int n;
+long distm[1000][1000];
 
 void opttwoandahalf(int *tour, int *points){
     srand(time(NULL));
     int loops = 1000000;
     for (int go = 0; go < loops; go++){
-    /*int miss = 0;
-    while(miss < (n)){*/
-        short r1 = rand() % n;
-        short r2 = rand() % n;
+        /*int miss = 0;
+        while(miss < (n)){*/
+        int r1 = rand() % n;
+        int r2 = rand() % n;
         //miss++;
 
-        short swap = points[r1];
+        int swap = points[r1];
         if(swap == r2 || points[swap] == r2 || points[r2] == swap){
             continue;
         }
@@ -27,7 +27,7 @@ void opttwoandahalf(int *tour, int *points){
 
         if(newdist < olddist){
             //miss--;
-            short temp = points[r2];
+            int temp = points[r2];
             points[r2] = swap;
             points[r1] = points[swap];
             points[swap] = temp;
@@ -43,31 +43,31 @@ void opttwoandahalf(int *tour, int *points){
 
 void shuffle(int *tour, int *points){
     srand(time(NULL));
-    short loops = n/2;
-    for (short go = 0; go < loops; go++){
-        short r1 = rand() % n;
-        short r2 = rand() % n;
+    int loops = 1;
+    for (int go = 0; go < loops; go++){
+        int r1 = rand() % n;
+        int r2 = rand() % n;
 
-        short swap = points[r1];
+        int swap = points[r1];
         if(swap == r2 || points[swap] == r2 || points[r2] == swap){
             continue;
         }
 
-        short temp = points[r2];
+        int temp = points[r2];
         points[r2] = swap;
         points[r1] = points[swap];
         points[swap] = temp;
     }
 
-    short v = 0;
-    for (short i = 0; i < n; i++) {
+    int v = 0;
+    for (int i = 0; i < n; i++) {
         tour[i] = v;
         v = points[v];
     }
 }
 
-short lengthOfTour(int *tour){
-    short length = distm[0][tour[n-1]];
+int lengthOfTour(int *tour){
+    int length = distm[0][tour[n-1]];
     for(int i = 0;i < n-1; i++){
         length = length + distm[tour[i]][tour[i+1]];
     }
@@ -138,14 +138,14 @@ int main() {
     }*/
 
 
-    //implement 2,5-opt OBS do not use tour after this, its old
+    //implement 2-opt OBS do not use tour after this, its old
 
     opttwoandahalf(tour, points);
     int tmpTour[n];
     for(int i = 0; i <n ; i++){
         tmpTour[i] = tour[i];
     }
-    short length1 = lengthOfTour(tour);
+    int length1 = lengthOfTour(tour);
     //shuffle(tour, points);
     opttwoandahalf(tour,points);
     int length2 = lengthOfTour(tour);
@@ -164,4 +164,3 @@ int main() {
     }
 
 }
-
