@@ -4,14 +4,83 @@
 #include <iostream>
 #include <cmath>
 using namespace std;
-int n;
+short n;
+short distm[1000][1000];
+
+void opttwoandahalf(int *tour, int *points){
+    srand(time(NULL));
+    int loops = 1000000;
+    for (int go = 0; go < loops; go++){
+    /*int miss = 0;
+    while(miss < (n)){*/
+        short r1 = rand() % n;
+        short r2 = rand() % n;
+        //miss++;
+
+        short swap = points[r1];
+        if(swap == r2 || points[swap] == r2 || points[r2] == swap){
+            continue;
+        }
+
+        long olddist = distm[r1][swap]+distm[swap][points[swap]]+distm[r2][points[r2]];
+        long newdist = distm[r1][points[swap]]+distm[r2][swap]+distm[swap][points[r2]];
+
+        if(newdist < olddist){
+            //miss--;
+            short temp = points[r2];
+            points[r2] = swap;
+            points[r1] = points[swap];
+            points[swap] = temp;
+        }
+    }
+
+    int v = 0;
+    for (int i = 0; i < n; i++) {
+        tour[i] = v;
+        v = points[v];
+    }
+}
+
+void shuffle(int *tour, int *points){
+    srand(time(NULL));
+    short loops = n/2;
+    for (short go = 0; go < loops; go++){
+        short r1 = rand() % n;
+        short r2 = rand() % n;
+
+        short swap = points[r1];
+        if(swap == r2 || points[swap] == r2 || points[r2] == swap){
+            continue;
+        }
+
+        short temp = points[r2];
+        points[r2] = swap;
+        points[r1] = points[swap];
+        points[swap] = temp;
+    }
+
+    short v = 0;
+    for (short i = 0; i < n; i++) {
+        tour[i] = v;
+        v = points[v];
+    }
+}
+
+short lengthOfTour(int *tour){
+    short length = distm[0][tour[n-1]];
+    for(int i = 0;i < n-1; i++){
+        length = length + distm[tour[i]][tour[i+1]];
+    }
+    return length;
+}
+
 int main() {
 
     cin >> n; // number of elements
 
     double x[n];
     double y[n];
-    long distm[n][n];
+
 
     //save x and y for every point.
     for(int i = 0; i < n; i++){
@@ -69,38 +138,30 @@ int main() {
     }*/
 
 
-   //implement 2-opt OBS do not use tour after this, its old
-    srand(time(NULL));
-    int loops = 100000;
-    for (int go = 0; go < loops; go++){
-        int r1 = rand() % n;
-        int r2 = rand() % n;
+    //implement 2,5-opt OBS do not use tour after this, its old
 
-        int swap = points[r1];
-        if(swap == r2 || points[swap] == r2 || points[r2] == swap){
-            continue;
-        }
+    opttwoandahalf(tour, points);
+    int tmpTour[n];
+    for(int i = 0; i <n ; i++){
+        tmpTour[i] = tour[i];
+    }
+    short length1 = lengthOfTour(tour);
+    //shuffle(tour, points);
+    opttwoandahalf(tour,points);
+    int length2 = lengthOfTour(tour);
 
-        long olddist = distm[r1][swap]+distm[swap][points[swap]]+distm[r2][points[r2]];
-        long newdist = distm[r1][points[swap]]+distm[r2][swap]+distm[swap][points[r2]];
+    //cout << length1 << " " << length2 << endl;
 
-        if(newdist < olddist){
-            int temp = points[r2];
-            points[r2] = swap;
-            points[r1] = points[swap];
-            points[swap] = temp;
-
+    if(length1 > length2){
+        for(int i = 0; i<n; i++){
+            cout<<tmpTour[i]<<endl;
         }
     }
-
-    int v = 0;
-    for (int i = 0; i < n; i++) {
-        tour[i] = v;
-        v = points[v];
+    else{
+        for(int i = 0; i<n; i++){
+            cout<<tour[i]<<endl;
+        }
     }
 
-
-    for(int i = 0; i<n; i++){
-        cout<<tour[i]<<endl;
-    }
 }
+
