@@ -41,8 +41,51 @@ void opttwoandahalf(int *tour, int *points){
     }
 }
 
+void twoOpt(int *tour, int *pointer){
+    short r1 = rand() % n;
+    short r2 = rand() % n;
+
+    short ph1 = r1;
+    short ph2 = r2;
+
+    if(ph1 > ph2){
+        short tmp = ph1;
+        ph1 = ph2;
+        ph2 = tmp;
+    }
+
+    short l = ph2- ph1;
+
+
+    r1 = tour[r1];
+    r2 = tour[r2];
+
+    short oldDist1 = distm[r1][pointer[r1]];
+    short oldDist2 = distm[r2][pointer[r2]];
+
+    short newDist1 = distm[r1][r2];
+    short newDist2 = distm[pointer[r2]][pointer[r1]];
+
+    if((oldDist1+oldDist2)>(newDist1+newDist2)){
+        short tmp;
+        tour[ph1+1] = tour[ph2];
+        for(int i = 0; i < ((l/2)-1); i++){
+            tmp = tour[ph1+1+i];
+            tour[ph1+i+1] = tour[ph2-i];
+            tour[ph2-i] = tmp;
+        }
+
+        pointer[r1] = r2;
+        tmp = r2;
+        for(int i = ph1; i < l+ph1; i++){
+            pointer[tmp] = tour[i];
+        }
+
+    }
+}
+
 void shuffle(int *tour, int *points){
-    srand(time(NULL));
+
     int loops = 1;
     for (int go = 0; go < loops; go++){
         int r1 = rand() % n;
@@ -75,12 +118,11 @@ int lengthOfTour(int *tour){
 }
 
 int main() {
-
+    srand(time(NULL));
     cin >> n; // number of elements
 
     double x[n];
     double y[n];
-
 
     //save x and y for every point.
     for(int i = 0; i < n; i++){
