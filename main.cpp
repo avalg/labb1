@@ -68,8 +68,7 @@ void twoOpt(int *tour, int *pointer){
 
     if((oldDist1+oldDist2)>(newDist1+newDist2)){
         short tmp;
-        tour[ph1+1] = tour[ph2];
-        for(int i = 0; i < ((l/2)-1); i++){
+        for(int i = 0; i < (l/2); i++){
             tmp = tour[ph1+1+i];
             tour[ph1+i+1] = tour[ph2-i];
             tour[ph2-i] = tmp;
