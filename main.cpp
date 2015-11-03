@@ -8,32 +8,27 @@ int n;
 long distm[1000][1000];
 
 void opttwoandahalf(int *tour, int *points){
-    srand(time(NULL));
-    int loops = 1000000;
-    for (int go = 0; go < loops; go++){
-        /*int miss = 0;
-        while(miss < (n)){*/
-        int r1 = rand() % n;
-        int r2 = rand() % n;
-        //miss++;
 
-        int swap = points[r1];
-        if(swap == r2 || points[swap] == r2 || points[r2] == swap){
-            continue;
-        }
+    /*int miss = 0;
+    while(miss < (n)){*/
+    int r1 = rand() % n;
+    int r2 = rand() % n;
+    //miss++;
 
-        long olddist = distm[r1][swap]+distm[swap][points[swap]]+distm[r2][points[r2]];
-        long newdist = distm[r1][points[swap]]+distm[r2][swap]+distm[swap][points[r2]];
-
-        if(newdist < olddist){
-            //miss--;
-            int temp = points[r2];
-            points[r2] = swap;
-            points[r1] = points[swap];
-            points[swap] = temp;
-        }
+    int swap = points[r1];
+    if(swap == r2 || points[swap] == r2 || points[r2] == swap){
+        return;
     }
+    long olddist = distm[r1][swap]+distm[swap][points[swap]]+distm[r2][points[r2]];
+    long newdist = distm[r1][points[swap]]+distm[r2][swap]+distm[swap][points[r2]];
 
+    if(newdist < olddist){
+        //miss--;
+        int temp = points[r2];
+        points[r2] = swap;
+        points[r1] = points[swap];
+        points[swap] = temp;
+    }
     int v = 0;
     for (int i = 0; i < n; i++) {
         tour[i] = v;
@@ -44,6 +39,9 @@ void opttwoandahalf(int *tour, int *points){
 void twoOpt(int *tour, int *pointer){
     short r1 = rand() % n;
     short r2 = rand() % n;
+
+    //cout << r1 << "r1 "<<endl;
+    //cout << r2 << "r2 "<<endl;
 
     short ph1 = r1;
     short ph2 = r2;
@@ -56,7 +54,6 @@ void twoOpt(int *tour, int *pointer){
 
     short l = ph2- ph1;
 
-
     r1 = tour[r1];
     r2 = tour[r2];
 
@@ -68,18 +65,37 @@ void twoOpt(int *tour, int *pointer){
 
     if((oldDist1+oldDist2)>(newDist1+newDist2)){
         short tmp;
+        /*for(int i = 0; i <n; i++){
+            cout<<i<<" points on "<<pointer[i]<<endl;
+        }*/
         for(int i = 0; i < (l/2); i++){
             tmp = tour[ph1+1+i];
             tour[ph1+i+1] = tour[ph2-i];
             tour[ph2-i] = tmp;
         }
-
-        pointer[r1] = r2;
-        tmp = r2;
-        for(int i = ph1; i < l+ph1; i++){
+        /*for(int i = 0; i <n; i++){
+            cout<<tour[i]<<" is on place "<<i<<endl;
+        }*/
+        /*tmp = tour[0];
+        for(int i = 1; i < n; i++){
             pointer[tmp] = tour[i];
+            tmp = tour[i];
         }
+        pointer[tour[n-1]] = tour[0];
+        */
 
+        tmp = tour[ph1];
+        for(int i = 0; i<=l+1; i++){
+            pointer[tmp] = tour[i+ph1];
+            tmp = tour[i+ph1];
+        }
+        pointer[tour[n-1]] = tour[0];
+
+
+
+        /*for(int i = 0; i <n; i++){
+            cout<<i<<" points on "<<pointer[i]<<endl;
+        }*/
     }
 }
 
@@ -116,6 +132,27 @@ int lengthOfTour(int *tour){
     return length;
 }
 
+void twoAlgLoop(int *tour, int *points, int timer){
+    int timeLeft = timer;
+    short times = 20;
+    //cout << timeLeft;
+    while(timeLeft > 0) {
+        for (
+                int i = 0;
+                i < times; i++) {
+            opttwoandahalf(tour, points
+            );
+        }
+
+        for (
+                int i = 0;
+                i < times; i++) {
+            twoOpt(tour, points
+            );
+        }
+        timeLeft = timeLeft - 1;
+    }
+}
 int main() {
     srand(time(NULL));
     cin >> n; // number of elements
@@ -178,21 +215,24 @@ int main() {
         cout <<points[i];
     }*/
 
+    short timer = 1500;
+    twoAlgLoop(tour, points, timer);
 
-    //implement 2-opt OBS do not use tour after this, its old
-
-    opttwoandahalf(tour, points);
+    //save the first tour
     int tmpTour[n];
     for(int i = 0; i <n ; i++){
         tmpTour[i] = tour[i];
     }
     int length1 = lengthOfTour(tour);
-    //shuffle(tour, points);
-    opttwoandahalf(tour,points);
-    int length2 = lengthOfTour(tour);
 
+    shuffle(tour, points);
+
+    twoAlgLoop(tour, points, timer);
+
+    int length2 = lengthOfTour(tour);
     //cout << length1 << " " << length2 << endl;
 
+    //print the result
     if(length1 > length2){
         for(int i = 0; i<n; i++){
             cout<<tmpTour[i]<<endl;
