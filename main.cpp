@@ -125,7 +125,7 @@ void shuffle(int *tour, int *points){
 }
 
 int lengthOfTour(int *tour){
-    int length = distm[0][tour[n-1]];
+    short length = distm[0][tour[n-1]];
     for(int i = 0;i < n-1; i++){
         length = length + distm[tour[i]][tour[i+1]];
     }
@@ -133,22 +133,18 @@ int lengthOfTour(int *tour){
 }
 
 void twoAlgLoop(int *tour, int *points, int timer){
-    int timeLeft = timer;
-    short times = 20;
+    short timeLeft = timer;
+    short times = 10;
     //cout << timeLeft;
     while(timeLeft > 0) {
         for (
-                int i = 0;
-                i < times; i++) {
-            opttwoandahalf(tour, points
-            );
+                short i = 0; i < times; i++) {
+            twoOpt(tour, points);
         }
 
         for (
-                int i = 0;
-                i < times; i++) {
-            twoOpt(tour, points
-            );
+                short i = 0; i < times; i++) {
+            opttwoandahalf(tour, points);
         }
         timeLeft = timeLeft - 1;
     }
@@ -215,7 +211,7 @@ int main() {
         cout <<points[i];
     }*/
 
-    short timer = 1500;
+    short timer = 7000;
     twoAlgLoop(tour, points, timer);
 
     //save the first tour
