@@ -3,165 +3,18 @@
 //
 #include <iostream>
 #include <cmath>
+#include <cstring>
 using namespace std;
+
 int n;
 long distm[1000][1000];
-
-void opttwoandahalf(int *tour, int *points){
-
-    /*int miss = 0;
-    while(miss < (n)){*/
-    int r1 = rand() % n;
-    int r2 = rand() % n;
-    //miss++;
-
-    int swap = points[r1];
-    if(swap == r2 || points[swap] == r2 || points[r2] == swap){
-        return;
-    }
-    long olddist = distm[r1][swap]+distm[swap][points[swap]]+distm[r2][points[r2]];
-    long newdist = distm[r1][points[swap]]+distm[r2][swap]+distm[swap][points[r2]];
-
-    if(newdist < olddist){
-        //miss--;
-        int temp = points[r2];
-        points[r2] = swap;
-        points[r1] = points[swap];
-        points[swap] = temp;
-    }
-    int v = 0;
-    for (int i = 0; i < n; i++) {
-        tour[i] = v;
-        v = points[v];
-    }
-}
-
-void twoOpt(int *tour, int *pointer){
-    short r1 = rand() % n;
-    short r2 = rand() % n;
-
-    //cout << r1 << "r1 "<<endl;
-    //cout << r2 << "r2 "<<endl;
-
-    short ph1 = r1;
-    short ph2 = r2;
-
-    if(ph1 > ph2){
-        short tmp = ph1;
-        ph1 = ph2;
-        ph2 = tmp;
-    }
-
-    short l = ph2- ph1;
-
-    r1 = tour[r1];
-    r2 = tour[r2];
-
-    short oldDist1 = distm[r1][pointer[r1]];
-    short oldDist2 = distm[r2][pointer[r2]];
-
-    short newDist1 = distm[r1][r2];
-    short newDist2 = distm[pointer[r2]][pointer[r1]];
-
-    if((oldDist1+oldDist2)>(newDist1+newDist2)){
-        short tmp;
-        /*for(int i = 0; i <n; i++){
-            cout<<i<<" points on "<<pointer[i]<<endl;
-        }*/
-        for(int i = 0; i < (l/2); i++){
-            tmp = tour[ph1+1+i];
-            tour[ph1+i+1] = tour[ph2-i];
-            tour[ph2-i] = tmp;
-        }
-        /*for(int i = 0; i <n; i++){
-            cout<<tour[i]<<" is on place "<<i<<endl;
-        }*/
-        /*tmp = tour[0];
-        for(int i = 1; i < n; i++){
-            pointer[tmp] = tour[i];
-            tmp = tour[i];
-        }
-        pointer[tour[n-1]] = tour[0];
-        */
-
-        tmp = tour[ph1];
-        for(int i = 0; i<=l+1; i++){
-            pointer[tmp] = tour[i+ph1];
-            tmp = tour[i+ph1];
-        }
-        pointer[tour[n-1]] = tour[0];
-
-
-
-        /*for(int i = 0; i <n; i++){
-            cout<<i<<" points on "<<pointer[i]<<endl;
-        }*/
-    }
-}
-
-void shuffle(int *tour, int *points){
-
-    int loops = 1;
-    for (int go = 0; go < loops; go++){
-        int r1 = rand() % n;
-        int r2 = rand() % n;
-
-        int swap = points[r1];
-        if(swap == r2 || points[swap] == r2 || points[r2] == swap){
-            continue;
-        }
-
-        int temp = points[r2];
-        points[r2] = swap;
-        points[r1] = points[swap];
-        points[swap] = temp;
-    }
-
-    int v = 0;
-    for (int i = 0; i < n; i++) {
-        tour[i] = v;
-        v = points[v];
-    }
-}
-
-int lengthOfTour(int *tour){
-    short length = distm[0][tour[n-1]];
-    for(int i = 0;i < n-1; i++){
-        length = length + distm[tour[i]][tour[i+1]];
-    }
-    return length;
-}
-
-void twoAlgLoop(int *tour, int *points, int timer){
-    short timeLeft = timer;
-    short times = 10;
-    //cout << timeLeft;
-    while(timeLeft > 0) {
-        for (
-                short i = 0; i < times; i++) {
-            twoOpt(tour, points);
-        }
-
-        for (
-                short i = 0; i < times; i++) {
-            opttwoandahalf(tour, points);
-        }
-        timeLeft = timeLeft - 1;
-    }
-}
-int main() {
-    srand(time(NULL));
-    cin >> n; // number of elements
-
-    double x[n];
-    double y[n];
-
-    //save x and y for every point.
-    for(int i = 0; i < n; i++){
-        cin >> x[i];
-        cin >> y[i];
-    }
-
+double x[1000];
+double y[1000];
+short tour[1000];
+short finalTour[1000];
+int a;
+int b;
+void buildMatrix(){
     //build distmatrix
     double xdist;
     double ydist;
@@ -175,9 +28,8 @@ int main() {
         }
     }
 
-
-    //sort list the naive way
-    int tour[n];
+}
+void greedyTour(){
     bool used[n];
 
     int b = 0;
@@ -199,45 +51,179 @@ int main() {
         tour[i] = best;
         used[best] = true;
     }
-    //remake list to pointer list
-    int points[n];
-    for(int i = 0; i < n-1;i++ ){
-        points[tour[i]] = tour[i+1];
-        //cout << points[tour[i]] << " points" <<endl;
+
+};
+
+int lengthOfTour(short *tour){
+    short length = distm[0][tour[n-1]];
+    for(int i = 0;i < n-1; i++){
+        length = length + distm[tour[i]][tour[i+1]];
     }
-    points[tour[n-1]] = 0;
-
-    /*for(int i = 0; i<n; i++){
-        cout <<points[i];
-    }*/
-
-    short timer = 7000;
-    twoAlgLoop(tour, points, timer);
-
-    //save the first tour
-    int tmpTour[n];
-    for(int i = 0; i <n ; i++){
-        tmpTour[i] = tour[i];
+    return length;
+}
+void swapIt() {
+    int l = (b-a)/2;
+    int tmp;
+    for(int i = 0; i < l; i++){
+        tmp = tour[a+1+i];
+        tour[a+1+i] = tour[b-i];
+        tour[b-i] = tmp;
     }
-    int length1 = lengthOfTour(tour);
+}
+void shuffle(){
+    //cout<< "plats1"<<endl;
+    clock_t start;
+    double runtime = 0;
 
-    shuffle(tour, points);
+    start = clock();
 
-    twoAlgLoop(tour, points, timer);
+    while(runtime < 10) {
+        a = rand() % n;
+        int le;
+        if (a > 0) {
+            le = n / a;
+        } else {
+            le = 1;
+        }
+        for (int i = 0; i < le; i++) {
+            a = rand() % n;
+            b = n-a-1;//rand() % n;
+            if ((a + 1) == b || a == b || (a + 1) == b) {
+                return;
+            }
+            swapIt();
+        }
+        runtime = ( clock() - start )/ (double)(CLOCKS_PER_SEC / 1000);
+    }
+}
+void twoPointFiveOpt(){
+    double finalTourDistance = lengthOfTour(tour);
+    double currentTourDistance;
+    memcpy(tour, finalTour, n* sizeof(short));
 
-    int length2 = lengthOfTour(tour);
-    //cout << length1 << " " << length2 << endl;
+    clock_t start;
+    double runtime = 0;
 
-    //print the result
-    if(length1 > length2){
-        for(int i = 0; i<n; i++){
-            cout<<tmpTour[i]<<endl;
+    start = clock();
+
+    while(runtime < 50){
+        int r1 = rand() % n;
+        int r2 = rand() % n;
+        //cout << " r1 "<<r1<<" r2 "<<r2<<endl;
+
+        if((r1+1) == r2 || r1==r2 || (r2+1)==r1){
+            return;
+        }
+        long olddist = distm[tour[r1]][tour[r1+1]]+distm[tour[r2]][tour[r2-1]]+distm[r2][tour[r2+1]];
+        long newdist = distm[tour[r1]][tour[r2]]+distm[tour[r2]][tour[r1+1]]+distm[tour[r2-1]][tour[r2+1]];
+
+        if(newdist < olddist){
+            //cout << " r1 "<<r1<<" r2 "<<r2<<endl;
+            /*for(int i = 0; i <n ; i++ ){
+                cout<< tour[i];
+            }
+            cout<<endl;*/
+            if (r1>r2) {
+                int tmp = r1;
+                r1 = r2;
+                r2 = tmp;
+                /*int tmp = r2;
+                for (int i = r2; i<r1; i++) {
+                    tour[i] = tour[i+1];
+                }
+                tour[r1] = tmp;
+                cout<< "r1 > r2"<< endl;*/
+            }
+            //else {
+            int temp = tour[r2];
+            for (int i = r2; i > r1 + 1; i--) {
+                tour[i] = tour[i - 1];
+            }
+            tour[r1 + 1] = temp;
+            //cout<< "r2 > r1"<< endl;
+            //}
+        }
+        runtime = ( clock() - start )/ (double)(CLOCKS_PER_SEC / 1000);
+    }
+    memcpy(finalTour, tour, n* sizeof(short));
+
+
+}
+
+
+void twoOpt(){
+
+    memcpy(finalTour, tour, n* sizeof(short));
+    double finalTourDistance = lengthOfTour(tour);
+    bool swapped;
+    double currentTourDistance;
+
+    clock_t start;
+    double runtime;
+
+    start = clock();
+
+    while (runtime < 100) {
+        swapped = false;
+        for (int i = 0; i < (n-1); i++) {
+            for (int j = i+1; j < (n-1); j++) {
+                double oldDistance =  distm[tour[i]][tour[i+1]] + distm[tour[j]][tour[j+1]];
+                double newDistance =  distm[tour[i]][tour[j]] + distm[tour[j+1]][tour[i+1]];
+                if (newDistance < oldDistance) {
+                    // make swap
+                    a = i;
+                    b = j;
+                    swapIt();
+                    swapped = true;
+                    //cout<< "plats3"<<endl;
+                }
+            }
+        }
+        runtime = ( clock() - start )/ (double)(CLOCKS_PER_SEC / 1000);
+        if (!swapped) {
+            currentTourDistance = lengthOfTour(tour);
+            if (currentTourDistance < finalTourDistance) {
+                memcpy(finalTour, tour, n* sizeof(short));
+                finalTourDistance = currentTourDistance;
+                //cout<< "plats5"<<endl;
+            }
+            shuffle();
         }
     }
-    else{
-        for(int i = 0; i<n; i++){
-            cout<<tour[i]<<endl;
-        }
+    if ((currentTourDistance = lengthOfTour(tour)) < finalTourDistance) {
+        memcpy(finalTour, tour, n*sizeof(short));
+        finalTourDistance = currentTourDistance;
+        //cout<< "plats1"<<endl;
+    }
+    //cout << finalTourDistance << endl;
+}
+
+int main() {
+
+    cin >> n; // number of elements
+
+    //save x and y for every point.
+    for(int i = 0; i < n; i++){
+        cin >> x[i];
+        cin >> y[i];
+    }
+
+    buildMatrix();
+    greedyTour();
+    memcpy(finalTour, tour, n* sizeof(short));
+
+    clock_t start;
+    double runtime;
+    start = clock();
+
+    while(runtime <1200) {
+        twoOpt();
+        twoPointFiveOpt();
+        runtime = ( clock() - start )/ (double)(CLOCKS_PER_SEC / 1000);
+    }
+
+    for(int i = 0; i<n; i++){
+        cout<<finalTour[i]<<endl;
     }
 
 }
